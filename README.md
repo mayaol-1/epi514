@@ -2,6 +2,6 @@
 
 1. Maya Oleynikova
 
-2. 
+2. Maddie Clay
 
 3. 
