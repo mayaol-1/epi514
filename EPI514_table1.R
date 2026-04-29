@@ -37,7 +37,7 @@ tab1$Category <- rownames(tab1)
 ft <- flextable(tab1)
 save_as_docx(ft, path = 'my_table.docx')
 
-
+#made a little change 
 
 # 2024 data
 df_2 <- read_parquet("C:/Users/mayaol/epi514/LLCP2024.parquet")
