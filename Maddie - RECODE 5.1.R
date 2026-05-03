@@ -248,7 +248,7 @@ df_2$inc_cat[df_2$incomg1 == 3] <- 2 # ≥$25,000 and <$35,000
 df_2$inc_cat[df_2$incomg1 == 4] <- 3 # ≥$35,000 and <$50,000
 df_2$inc_cat[df_2$incomg1 == 5] <- 4 # ≥50,000 and <$100,000
 df_2$inc_cat[df_2$incomg1 == 6] <- 5 # ≥100,000 and <$200,000
-df_2$inc_cat[df_2$incomg1 == 6] <- 6 # ≥$200,000
+df_2$inc_cat[df_2$incomg1 == 7] <- 6 # ≥$200,000
 df_2$inc_cat[df_2$incomg1 == 9] <- NA # Don't know, not sure, missing
 
 df_2$inc_cat <- factor(df_2$inc_cat,
