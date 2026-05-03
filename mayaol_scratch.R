@@ -1,6 +1,14 @@
+rm(list = ls())
+# load library 
+library(haven)
+library(arrow)
+library(dplyr)
+library(tidyverse)
+library(epiR)
+library(flextable)
 # Checking on sample size for power calculation
 # 2019 data
-df_1 <- read_parquet("C:/Users/mayaol/epi514/LLCP2019.parquet")
+df_1 <- read_parquet("/Users/betitessema/epi514/LLCP2019.parquet")
 
 # Filter to DRNKANY5 == 1 & all covars present
 df_1 <- df_1 %>%
@@ -18,9 +26,18 @@ df_1 <- df_1 %>%
 # Heavy drinking status
 df_1 <- df_1 %>%
   mutate(heavy_drink = if_else(`_RFDRHV7` == 2, 
-                               1, 
-                               2
+                               1,                            2
   ))
+
+#create table 1 and save as a word document 
+tab <- table(df_1$DRNK3GE5, df_1$`_URBSTAT`, useNA = 'ifany')
+prop.table(tab,margin = 2)
+tab1 <- as.data.frame.matrix(prop.table(tab, 1))
+tab1$Category <- rownames(tab1)
+ft <- flextable(tab1)
+save_as_docx(ft, path = 'my_table.docx')
+
+
 
 # 2024 data
 df_2 <- read_parquet("C:/Users/mayaol/epi514/LLCP2024.parquet")
