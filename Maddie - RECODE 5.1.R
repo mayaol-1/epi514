@@ -9,10 +9,10 @@ library(epiR)
 # Checking on sample size for power calculation
 # 2019 data
 
-df_1 <- read_parquet("/Users/madisonclay/epi514/LLCP2019.parquet")
+df_1 <- read_parquet("C:/Users/mayaol/epi514/LLCP2019.parquet")
 
 # 2024 data
-df_2 <- read_parquet("/Users/madisonclay/epi514/LLCP2024.parquet")
+df_2 <- read_parquet("C:/Users/mayaol/epi514/LLCP2024.parquet")
 
 
 # Bind together for full dataset
@@ -112,8 +112,8 @@ df_1$age_cat[df_1$ageg5yr == 13] <- 12 # 80+ yo
 df_1$age_cat[df_1$ageg5yr == 14] <- NA
 
 df_1$age_cat <- factor(df_1$age_cat,
-                   levels=0:12,
-                   labels=c("18-24yo", "25-29 yo", "30-34 yo", "35-39 yo","40-44 yo", "45-49 yo", "50-54 yo", "55-59 yo", "60-64 yo", "65-69 yo", "70-74 yo", "75-79 yo", "80+ yo"))
+                       levels=0:12,
+                       labels=c("18-24yo", "25-29 yo", "30-34 yo", "35-39 yo","40-44 yo", "45-49 yo", "50-54 yo", "55-59 yo", "60-64 yo", "65-69 yo", "70-74 yo", "75-79 yo", "80+ yo"))
 #Check 
 table(df_1$ageg5yr, df_1$age_cat, useNA = "always")
 table(df_1$age_cat, useNA = "always")
@@ -132,8 +132,8 @@ df_1$race_cat[df_1$race == 8] <- 7 # Hispanic
 df_1$race_cat[df_1$race == 9] <- NA # Don't know, refused, not sure
 
 df_1$race_cat <- factor(df_1$race_cat,
-                       levels=0:7,
-                       labels=c("White only", "Black only", "AI/AN only", "Asian only","Native Hawaiian or other Pacific Islander only", "Other race only", "Multiracial", "Hispanic"))
+                        levels=0:7,
+                        labels=c("White only", "Black only", "AI/AN only", "Asian only","Native Hawaiian or other Pacific Islander only", "Other race only", "Multiracial", "Hispanic"))
 #Check 
 table(df_1$race, df_1$race_cat, useNA = "always")
 table(df_1$race_cat, useNA = "always")
@@ -149,8 +149,8 @@ df_1$inc_cat[df_1$incomg == 5] <- 4 # ≥$50,000
 df_1$inc_cat[df_1$incomg == 9] <- NA # Don't know, not sure, missing
 
 df_1$inc_cat <- factor(df_1$inc_cat,
-                        levels=0:4,
-                        labels=c("Less than $15,000", "≥$15,000 and <$25,000", "≥$25,000 and <$35,000", "≥$35,000 and <$50,000","≥$50,000"))
+                       levels=0:4,
+                       labels=c("Less than $15,000", "≥$15,000 and <$25,000", "≥$25,000 and <$35,000", "≥$35,000 and <$50,000","≥$50,000"))
 #Check 
 table(df_1$incomg, df_1$inc_cat, useNA = "always")
 table(df_1$inc_cat, useNA = "always")
@@ -247,16 +247,20 @@ df_2$inc_cat[df_2$incomg1 == 2] <- 1 # ≥$15,000 and <$25,000
 df_2$inc_cat[df_2$incomg1 == 3] <- 2 # ≥$25,000 and <$35,000
 df_2$inc_cat[df_2$incomg1 == 4] <- 3 # ≥$35,000 and <$50,000
 df_2$inc_cat[df_2$incomg1 == 5] <- 4 # ≥50,000 and <$100,000
-df_2$inc_cat[df_2$incomg1 == 6] <- 5 # ≥100,000 and <$200,000
-df_2$inc_cat[df_2$incomg1 == 6] <- 6 # ≥$200,000
+df_2$inc_cat[df_2$incomg1 == 6] <- 4 # ≥100,000 and <$200,000
+df_2$inc_cat[df_2$incomg1 == 7] <- 4 # ≥$200,000
 df_2$inc_cat[df_2$incomg1 == 9] <- NA # Don't know, not sure, missing
 
 df_2$inc_cat <- factor(df_2$inc_cat,
-                       levels=0:6,
-                       labels=c("Less than $15,000", "≥$15,000 and <$25,000", "≥$25,000 and <$35,000", "≥$35,000 and <$50,000","≥50,000 and <$100,000", "≥100,000 and <$200,000", "≥$200,000"))
+                       levels=0:4,
+                       labels=c("Less than $15,000", "≥$15,000 and <$25,000", "≥$25,000 and <$35,000", "≥$35,000 and <$50,000","≥$50,000"))
 #Check 
 table(df_2$incomg1, df_2$inc_cat, useNA = "always")
 table(df_2$inc_cat, useNA = "always")
+
+# Exporting
+write_parquet(df_1, "C:/Users/mayaol/epi514/BRFSS_2019.parquet")
+write_parquet(df_1, "C:/Users/mayaol/epi514/BRFSS_2024.parquet")
 
 ##### NEW, RECODED VARIABLES 
 
