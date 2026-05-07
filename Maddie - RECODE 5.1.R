@@ -260,7 +260,7 @@ table(df_2$inc_cat, useNA = "always")
 
 # Exporting
 write_parquet(df_1, "C:/Users/mayaol/epi514/BRFSS_2019.parquet")
-write_parquet(df_1, "C:/Users/mayaol/epi514/BRFSS_2024.parquet")
+write_parquet(df_2, "C:/Users/mayaol/epi514/BRFSS_2024.parquet")
 
 ##### NEW, RECODED VARIABLES 
 
