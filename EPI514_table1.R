@@ -6,12 +6,10 @@ library(dplyr)
 library(tidyverse)
 library(epiR)
 library(flextable)
-library(tibble)
-library(officer)
 # Checking on sample size for power calculation
 # 2019 data
-df_1 <- read_parquet('/Users/betitessema/Downloads/BRFSS_2019.parquet')
-df_2 <- read_parquet('/Users/betitessema/Downloads/BRFSS_2024.parquet')
+df_1 <- read_parquet("/Users/betitessema/epi514/LLCP2019.parquet")
+
 # Filter to DRNKANY5 == 1 & all covars present
 df_1 <- df_1 %>%
   filter(DRNKANY5 == 1) %>%
@@ -30,6 +28,16 @@ df_1 <- df_1 %>%
   mutate(heavy_drink = if_else(`_RFDRHV7` == 2, 
                                1,                            2
   ))
+
+#create table 1 and save as a word document 
+tab <- table(df_1$DRNK3GE5, df_1$`_URBSTAT`, useNA = 'ifany')
+prop.table(tab,margin = 2)
+tab1 <- as.data.frame.matrix(prop.table(tab, 1))
+tab1$Category <- rownames(tab1)
+ft <- flextable(tab1)
+save_as_docx(ft, path = 'my_table.docx')
+
+#made a little change 
 
 # 2024 data
 df_2 <- read_parquet("C:/Users/mayaol/epi514/LLCP2024.parquet")
@@ -136,85 +144,3 @@ df_xpt <- read_xpt("C:/Users/mayaol/epi514/LLCP2019.XPT")
 # 2. Write to Parquet for your future self
 # Parquet is still much faster for daily work than XPT
 write_parquet(df_xpt, "C:/Users/mayaol/epi514/LLCP2019.parquet")
-
-
-
-#table 1 
-# load data 
-df_1 <- read_parquet('/Users/betitessema/Downloads/BRFSS_2019.parquet')
-df_2 <- read_parquet('/Users/betitessema/Downloads/BRFSS_2024.parquet')
-
-# Combine 2019 and 2024 data
-df_2019 <- df_1 %>%
-  mutate(year = "2019") %>%
-  select(year, sex_cat, urbstat_cat, heavyalc, drnkany, age_cat, race_cat, inc_cat)
-
-df_2024 <- df_2 %>%
-  mutate(year = "2024") %>%
-  select(year, sex_cat, urbstat_cat, heavyalc, drnkany, age_cat, race_cat, inc_cat)
-
-df_combined <- bind_rows(df_2019, df_2024)
-
-# urbanicity by heavy drinking status 
-df_drinkers <- df_combined %>%
-  filter(drnkany == 1 | drnkany == "1" | drnkany == "Yes")
-
-tab_urb_heavy <- table(df_drinkers$urbstat_cat, df_drinkers$heavyalc)
-
-tab_urb_heavy
-prop.table(tab_urb_heavy, margin = 2) * 100
-
-#tab w/ counts and percentage 
-count_tab <- table(df_drinkers$urbstat_cat, df_drinkers$heavyalc)
-prop_tab <- prop.table(count_tab, margin = 2) * 100
-
-table1_urb <- paste0(
-  count_tab,
-  " (",
-  round(prop_tab, 1),
-  "%)")
-
-table1_urb
-
-# create frequency table of counts
-make_prop_table <- function(data, var, by_var) {
-  
-  count_tab <- table(data[[var]], data[[by_var]], useNA = "ifany")
-  prop_tab <- prop.table(count_tab, margin = 2) * 100
-  
-  output <- paste0(
-    count_tab,
-    " (",
-    round(prop_tab, 1),
-    "%)"
-  )
-  
-  return(output)
-}
-
-# table by heavy drinker
-make_prop_table(df_drinkers, "urbstat_cat", "heavyalc")
-make_prop_table(df_drinkers, "sex_cat", "heavyalc")
-make_prop_table(df_drinkers, "age_cat", "heavyalc")
-make_prop_table(df_drinkers, "race_cat", "heavyalc")
-make_prop_table(df_drinkers, "inc_cat", "heavyalc")
-make_prop_table(df_drinkers, "year", "heavyalc")
-
-# table by year
-make_prop_table(df_drinkers, "heavyalc", "year")
-make_prop_table(df_drinkers, "urbstat_cat", "year")
-make_prop_table(df_drinkers, "sex_cat", "year")
-make_prop_table(df_drinkers, "age_cat", "year")
-make_prop_table(df_drinkers, "race_cat", "year")
-make_prop_table(df_drinkers, "inc_cat", "year")
-
-# by year and heavy drinking
-df_drinkers <- df_drinkers %>%
-  mutate(year_heavyalc = interaction(year, heavyalc, sep = "_"))
-
-make_prop_table(df_drinkers, "urbstat_cat", "year_heavyalc")
-make_prop_table(df_drinkers, "sex_cat", "year_heavyalc")
-make_prop_table(df_drinkers, "age_cat", "year_heavyalc")
-make_prop_table(df_drinkers, "race_cat", "year_heavyalc")
-make_prop_table(df_drinkers, "inc_cat", "year_heavyalc")
-

@@ -9,10 +9,8 @@ library(epiR)
 # Checking on sample size for power calculation
 # 2019 data
 
-df_1 <- read_parquet("C:/Users/mayaol/epi514/LLCP2019.parquet")
-
-# 2024 data
-df_2 <- read_parquet("C:/Users/mayaol/epi514/LLCP2024.parquet")
+df_1 <- read_parquet("/Users/madisonclay/epi514/BRFSS_2019.parquet")
+df_2 <- read_parquet("/Users/madisonclay/epi514/BRFSS_2024.parquet")
 
 
 # Bind together for full dataset
@@ -247,8 +245,13 @@ df_2$inc_cat[df_2$incomg1 == 2] <- 1 # ≥$15,000 and <$25,000
 df_2$inc_cat[df_2$incomg1 == 3] <- 2 # ≥$25,000 and <$35,000
 df_2$inc_cat[df_2$incomg1 == 4] <- 3 # ≥$35,000 and <$50,000
 df_2$inc_cat[df_2$incomg1 == 5] <- 4 # ≥50,000 and <$100,000
+# HEAD
 df_2$inc_cat[df_2$incomg1 == 6] <- 4 # ≥100,000 and <$200,000
 df_2$inc_cat[df_2$incomg1 == 7] <- 4 # ≥$200,000
+#
+df_2$inc_cat[df_2$incomg1 == 6] <- 5 # ≥100,000 and <$200,000
+df_2$inc_cat[df_2$incomg1 == 7] <- 6 # ≥$200,000
+#ea105259af870d936b35ade204aa78d19cafc2b1
 df_2$inc_cat[df_2$incomg1 == 9] <- NA # Don't know, not sure, missing
 
 df_2$inc_cat <- factor(df_2$inc_cat,
@@ -281,3 +284,74 @@ df_2$drnkany
 df_2$age_cat
 df_2$race_cat
 df_2$inc_cat
+
+# table 2 -- 2x2 tables for alcohol x urbanicity and income / age 
+#2019 data crude 
+first.2by2 <- with(df_1, table(heavyalc, urbstat_cat))
+first.2by2.output <- epi.2by2(first.2by2, method = 'cross.sectional')
+first.2by2.output
+
+#2024 data crude 
+second.2by2 <- with(df_2, table(heavyalc, urbstat_cat))
+second.2by2.output <- epi.2by2(second.2by2, method = 'cross.sectional')
+second.2by2.output
+
+
+#2019 with age 
+age19.2by2 <- with(df_1, table(heavyalc, urbstat_cat, age_cat))
+age19.2by2.output <- epi.2by2(age19.2by2, method = 'cross.sectional')
+age19.2by2.output
+
+#2024 with age 
+age24.2by2 <- with(df_2, table(heavyalc, urbstat_cat, age_cat))
+age24.2by2.output <- epi.2by2(age24.2by2, method = 'cross.sectional')
+age24.2by2.output
+
+
+#2019 with income
+income19.2by2 <- with(df_1, table(heavyalc, urbstat_cat, inc_cat))
+income19.2by2.output <- epi.2by2(income19.2by2, method = 'cross.sectional')
+income19.2by2.output
+
+#2024 with income
+income24.2by2 <- with(df_2, table(heavyalc, urbstat_cat, inc_cat))
+income24.2by2.output <- epi.2by2(income24.2by2, method = 'cross.sectional')
+income24.2by2.output
+
+
+#2019 with income and age 
+
+complicated.19 <- xtabs(~ heavyalc + urbstat_cat + urbstat_cat + inc_cat,
+                         data = df_1)
+n_strata <- 2 * 2
+
+complicated.array <- array(
+  complicated.19,
+  dim = c(2, 2, n_strata),
+  dimnames = list(
+    heavyalc = levels(df_1$heavyalc),
+    urbanicity = levels(df_1$urbstat_cat),
+    stratum        = seq_len(n_strata)
+  )
+)
+
+complicated.output <- epi.2by2(dat = complicated.array, method = "cross.sectional")
+complicated.output
+
+#2024 with income and age 
+complicated.19 <- xtabs(~ heavyalc + urbstat_cat + urbstat_cat + inc_cat,
+                        data = df_1)
+n_strata <- 2 * 2
+
+complicated.array <- array(
+  complicated.19,
+  dim = c(2, 2, n_strata),
+  dimnames = list(
+    heavyalc = levels(df_1$heavyalc),
+    urbanicity = levels(df_1$urbstat_cat),
+    stratum        = seq_len(n_strata)
+  )
+)
+
+complicated.output <- epi.2by2(dat = complicated.array, method = "cross.sectional")
+complicated.output
