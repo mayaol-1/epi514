@@ -375,3 +375,11 @@ race19.2by2.output
 race24.2by2 <- with(df_2, table(heavyalc, urbstat_cat, race_cat))
 race24.2by2.output <- epi.2by2(race24.2by2, method = 'cross.sectional')
 race24.2by2.output
+
+# Bind together for full dataset
+df <- bind_rows(df_1, df_2)
+# combined years race 
+race_all.2by2 <- with(df, table(heavyalc, urbstat_cat, race_cat))
+race_all.2by2.output <- epi.2by2(race_all.2by2, method = 'cross.sectional')
+race_all.2by2.output
+
