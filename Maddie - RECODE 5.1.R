@@ -339,19 +339,39 @@ complicated.output <- epi.2by2(dat = complicated.array, method = "cross.sectiona
 complicated.output
 
 #2024 with income and age 
-complicated.19 <- xtabs(~ heavyalc + urbstat_cat + urbstat_cat + inc_cat,
-                        data = df_1)
+complicated.24 <- xtabs(~ heavyalc + urbstat_cat + urbstat_cat + inc_cat,
+                        data = df_2)
 n_strata <- 2 * 2
 
 complicated.array <- array(
-  complicated.19,
+  complicated.24,
   dim = c(2, 2, n_strata),
   dimnames = list(
-    heavyalc = levels(df_1$heavyalc),
-    urbanicity = levels(df_1$urbstat_cat),
+    heavyalc = levels(df_2$heavyalc),
+    urbanicity = levels(df_2$urbstat_cat),
     stratum        = seq_len(n_strata)
   )
 )
 
-complicated.output <- epi.2by2(dat = complicated.array, method = "cross.sectional")
-complicated.output
+complicated.output.24 <- epi.2by2(dat = complicated.array, method = "cross.sectional")
+complicated.output.24
+
+#2019 with sex 
+sex19.2by2 <- with(df_1, table(heavyalc, urbstat_cat, sex_cat))
+sex19.2by2.output <- epi.2by2(sex19.2by2, method = 'cross.sectional')
+sex19.2by2.output
+
+#2024 with sex 
+sex24.2by2 <- with(df_2, table(heavyalc, urbstat_cat, sex_cat))
+sex24.2by2.output <- epi.2by2(sex24.2by2, method = 'cross.sectional')
+sex24.2by2.output
+
+#2019 with race
+race19.2by2 <- with(df_1, table(heavyalc, urbstat_cat, race_cat))
+race19.2by2.output <- epi.2by2(race19.2by2, method = 'cross.sectional')
+race19.2by2.output
+
+#2024 with race
+race24.2by2 <- with(df_2, table(heavyalc, urbstat_cat, race_cat))
+race24.2by2.output <- epi.2by2(race24.2by2, method = 'cross.sectional')
+race24.2by2.output
