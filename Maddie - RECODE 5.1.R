@@ -383,3 +383,56 @@ race_all.2by2 <- with(df, table(heavyalc, urbstat_cat, race_cat))
 race_all.2by2.output <- epi.2by2(race_all.2by2, method = 'cross.sectional')
 race_all.2by2.output
 
+#table 2 work -- 2019 , Age 
+library(gt)
+library(tidyverse)
+
+
+table2_data <- data.frame(
+  Group = c("Rural (Reference)", "Urban"),
+  Cases = c(55222, 3350),  #using the age MH test outcome, 55222 cases (urban, heavy drinking yes) and 3350 cases (rural, heavy drinking yes)
+  Total = c(354562, 22764),# Exposure+ , Exposure- totals. This means Ubran totals, Rural totals 
+  Prevalence = c("15.57%", "14.72%"),
+  Crude_PR = c("1.00 (Ref)", "1.06 (1.02, 1.09)"),
+  Adjusted_PR = c("1.00 (Ref)", "1.03 (0.99, 1.06)") # Using your M-H adjusted values
+)
+table2_data
+
+#now making it into a table 
+table2_output <- table2_data %>%
+  gt() %>%
+  # Add Main Heading and Subheading
+  tab_header(
+    title = "Table 2. Association Between Exposure and Outcome",
+    subtitle = "Analysis of Prevalence Risk Ratios (n = 377,326)"
+  ) %>%
+  # Rename columns for clarity
+  cols_label(
+    Group = "Exposure Status",
+    Cases = "Cases (n)",
+    Total = "Total (N)",
+    Prevalence = "Prevalence",
+    Crude_PR = "Crude PR (95% CI)",
+    Adjusted_PR = "Adjusted PR (95% CI)*"
+  ) %>%
+  # Alignment and Styling
+  cols_align(align = "center", columns = everything()) %>%
+  cols_align(align = "left", columns = Group) %>%
+  # Add footnotes for the M-H adjustment
+  tab_footnote(
+    footnote = "Adjusted for stratification variables using Mantel-Haenszel methods.",
+    locations = cells_column_labels(columns = Adjusted_PR)
+  ) %>%
+  # Add thick/thin lines for publication style
+  opt_row_striping() %>%
+  tab_options(
+    table.border.top.color = "black",
+    table.border.bottom.color = "black",
+    heading.border.bottom.color = "black",
+    column_labels.border.bottom.color = "black",
+    column_labels.border.top.color = "black"
+  )
+
+# Display the table
+table2_output
+
