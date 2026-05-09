@@ -387,12 +387,16 @@ race_all.2by2.output
 library(gt)
 library(tidyverse)
 
+#2019 with age 
+age19.2by2 <- with(df_1, table(heavyalc, urbstat_cat, age_cat))
+age19.2by2.output <- epi.2by2(age19.2by2, method = 'cross.sectional')
+age19.2by2.output 
 
 table2_data <- data.frame(
   Group = c("Rural (Reference)", "Urban"),
-  Cases = c(55222, 3350),  #using the age MH test outcome, 55222 cases (urban, heavy drinking yes) and 3350 cases (rural, heavy drinking yes)
-  Total = c(354562, 22764),# Exposure+ , Exposure- totals. This means Ubran totals, Rural totals 
-  Prevalence = c("15.57%", "14.72%"),
+  Cases = c(3350, 55222),  #using the age MH test outcome Rural (Exposure-), then Urban (Exposure+)
+  Total = c(22764, 354562),# # Rural (Exposure-), then Urban (Exposure+)
+  Prevalence = c("14.72%", "15.57%"),
   Crude_PR = c("1.00 (Ref)", "1.06 (1.02, 1.09)"),
   Adjusted_PR = c("1.00 (Ref)", "1.03 (0.99, 1.06)") # Using your M-H adjusted values
 )
@@ -403,7 +407,7 @@ table2_output <- table2_data %>%
   gt() %>%
   # Add Main Heading and Subheading
   tab_header(
-    title = "Table 2. Association Between Exposure and Outcome",
+    title = "Table 2. Association Between Urbanicity and Heavy Drinking adjusted by Age in 2019",
     subtitle = "Analysis of Prevalence Risk Ratios (n = 377,326)"
   ) %>%
   # Rename columns for clarity
@@ -436,3 +440,242 @@ table2_output <- table2_data %>%
 # Display the table
 table2_output
 
+
+#table 2 work -- 2024 , Age 
+
+#2024 with age 
+age24.2by2 <- with(df_2, table(heavyalc, urbstat_cat, age_cat))
+age24.2by2.output <- epi.2by2(age24.2by2, method = 'cross.sectional')
+age24.2by2.output
+
+table2_data <- data.frame(
+  Group = c("Rural (Reference)", "Urban"),
+  Cases = c(3311, 50268),  #using the age MH test outcome Rural (Exposure-), then Urban (Exposure+)
+  Total = c(23254, 368716),# Rural (Exposure-), then Urban (Exposure+)
+  Prevalence = c("14.24%", "13.63%"),
+  Crude_PR = c("1.00 (Ref)", "0.96 (0.93, 0.99)"),
+  Adjusted_PR = c("1.00 (Ref)", "0.93 (0.90, 0.96)") # Using your M-H adjusted values
+)
+table2_data
+
+#now making it into a table 
+table2_output <- table2_data %>%
+  gt() %>%
+  # Add Main Heading and Subheading
+  tab_header(
+    title = "Table 2. Association Between Urbanicity and Heavy Drinking adjusted by Age in 2024",
+    subtitle = "Analysis of Prevalence Risk Ratios (n = 391,970)"
+  ) %>%
+  # Rename columns for clarity
+  cols_label(
+    Group = "Exposure Status",
+    Cases = "Cases (n)",
+    Total = "Total (N)",
+    Prevalence = "Prevalence",
+    Crude_PR = "Crude PR (95% CI)",
+    Adjusted_PR = "Adjusted PR (95% CI)*"
+  ) %>%
+  # Alignment and Styling
+  cols_align(align = "center", columns = everything()) %>%
+  cols_align(align = "left", columns = Group) %>%
+  # Add footnotes for the M-H adjustment
+  tab_footnote(
+    footnote = "Adjusted for stratification variables using Mantel-Haenszel methods.",
+    locations = cells_column_labels(columns = Adjusted_PR)
+  ) %>%
+  # Add thick/thin lines for publication style
+  opt_row_striping() %>%
+  tab_options(
+    table.border.top.color = "black",
+    table.border.bottom.color = "black",
+    heading.border.bottom.color = "black",
+    column_labels.border.bottom.color = "black",
+    column_labels.border.top.color = "black"
+  )
+
+# Display the table
+table2_output
+
+#table 2, Sex 2019 
+#2019 with sex 
+sex19.2by2 <- with(df_1, table(heavyalc, urbstat_cat, sex_cat))
+sex19.2by2.output <- epi.2by2(sex19.2by2, method = 'cross.sectional')
+sex19.2by2.output
+
+table2_data <- data.frame(
+  Group = c("Rural (Reference)", "Urban"),
+  Cases = c(3368, 55801),
+  Total = c(22926, 359601),
+  Prevalence = c("14.69%", "15.52%"),
+  Crude_PR = c("1.00 (Ref)", "1.06 (1.02, 1.09)"),
+  Adjusted_PR = c("1.00 (Ref)", "1.05 (1.02, 1.09)")
+)
+
+table2_output <- table2_data %>%
+  gt() %>%
+  tab_header(
+    title = "Table 2. Association Between Urbanicity and Heavy Drinking Adjusted by Sex in 2019",
+    subtitle = "Analysis of Prevalence Risk Ratios (n = 382,527)"
+  ) %>%
+  cols_label(
+    Group = "Exposure Status",
+    Cases = "Cases (n)",
+    Total = "Total (N)",
+    Prevalence = "Prevalence",
+    Crude_PR = "Crude PR (95% CI)",
+    Adjusted_PR = "Adjusted PR (95% CI)*"
+  ) %>%
+  cols_align(align = "center", columns = everything()) %>%
+  cols_align(align = "left", columns = Group) %>%
+  tab_footnote(
+    footnote = "Adjusted for sex using Mantel-Haenszel methods.",
+    locations = cells_column_labels(columns = Adjusted_PR)
+  ) %>%
+  opt_row_striping() %>%
+  tab_options(
+    table.border.top.color = "black",
+    table.border.bottom.color = "black",
+    heading.border.bottom.color = "black",
+    column_labels.border.bottom.color = "black",
+    column_labels.border.top.color = "black"
+  )
+
+table2_output
+
+#table 2, 2024 and Sex 
+#2024 with sex 
+sex24.2by2 <- with(df_2, table(heavyalc, urbstat_cat, sex_cat))
+sex24.2by2.output <- epi.2by2(sex24.2by2, method = 'cross.sectional')
+sex24.2by2.output
+
+table2_data <- data.frame(
+  Group = c("Rural (Reference)", "Urban"),
+  Cases = c(3338, 50920),
+  Total = c(23459, 374350),
+  Prevalence = c("14.23%", "13.60%"),
+  Crude_PR = c("1.00 (Ref)", "0.96 (0.93, 0.99)"),
+  Adjusted_PR = c("1.00 (Ref)", "0.95 (0.92, 0.99)")
+)
+
+table2_output <- table2_data %>%
+  gt() %>%
+  tab_header(
+    title = "Table 2. Association Between Urbanicity and Heavy Drinking Adjusted by Sex in 2024",
+    subtitle = "Analysis of Prevalence Risk Ratios (n = 397,809)"
+  ) %>%
+  cols_label(
+    Group = "Exposure Status",
+    Cases = "Cases (n)",
+    Total = "Total (N)",
+    Prevalence = "Prevalence",
+    Crude_PR = "Crude PR (95% CI)",
+    Adjusted_PR = "Adjusted PR (95% CI)*"
+  ) %>%
+  cols_align(align = "center", columns = everything()) %>%
+  cols_align(align = "left", columns = Group) %>%
+  tab_footnote(
+    footnote = "Adjusted for sex using Mantel-Haenszel methods.",
+    locations = cells_column_labels(columns = Adjusted_PR)
+  ) %>%
+  opt_row_striping() %>%
+  tab_options(
+    table.border.top.color = "black",
+    table.border.bottom.color = "black",
+    heading.border.bottom.color = "black",
+    column_labels.border.bottom.color = "black",
+    column_labels.border.top.color = "black"
+  )
+
+table2_output
+
+#table 2 race 2019 
+#2019 with race
+race19.2by2 <- with(df_1, table(heavyalc, urbstat_cat, race_cat))
+race19.2by2.output <- epi.2by2(race19.2by2, method = 'cross.sectional')
+race19.2by2.output
+
+table2_data <- data.frame(
+  Group = c("Rural (Reference)", "Urban"),
+  Cases = c(3312, 54828),
+  Total = c(22568, 352553),
+  Prevalence = c("14.68%", "15.55%"),
+  Crude_PR = c("1.00 (Ref)", "1.06 (1.03, 1.09)"),
+  Adjusted_PR = c("1.00 (Ref)", "1.09 (1.06, 1.13)")
+)
+
+table2_output <- table2_data %>%
+  gt() %>%
+  tab_header(
+    title = "Table 2. Association Between Urbanicity and Heavy Drinking Adjusted by Race/Ethnicity in 2019",
+    subtitle = "Analysis of Prevalence Risk Ratios (n = 375,121)"
+  ) %>%
+  cols_label(
+    Group = "Exposure Status",
+    Cases = "Cases (n)",
+    Total = "Total (N)",
+    Prevalence = "Prevalence",
+    Crude_PR = "Crude PR (95% CI)",
+    Adjusted_PR = "Adjusted PR (95% CI)*"
+  ) %>%
+  cols_align(align = "center", columns = everything()) %>%
+  cols_align(align = "left", columns = Group) %>%
+  tab_footnote(
+    footnote = "Adjusted for race/ethnicity using Mantel-Haenszel methods.",
+    locations = cells_column_labels(columns = Adjusted_PR)
+  ) %>%
+  opt_row_striping() %>%
+  tab_options(
+    table.border.top.color = "black",
+    table.border.bottom.color = "black",
+    heading.border.bottom.color = "black",
+    column_labels.border.bottom.color = "black",
+    column_labels.border.top.color = "black"
+  )
+
+table2_output
+
+#table 2 race/eth in 2024 
+#2024 with race
+race24.2by2 <- with(df_2, table(heavyalc, urbstat_cat, race_cat))
+race24.2by2.output <- epi.2by2(race24.2by2, method = 'cross.sectional')
+race24.2by2.output
+
+table2_data <- data.frame(
+  Group = c("Rural (Reference)", "Urban"),
+  Cases = c(3300, 50132),
+  Total = c(23160, 367735),
+  Prevalence = c("14.25%", "13.63%"),
+  Crude_PR = c("1.00 (Ref)", "0.96 (0.93, 0.99)"),
+  Adjusted_PR = c("1.00 (Ref)", "1.01 (0.98, 1.04)")
+)
+
+table2_output <- table2_data %>%
+  gt() %>%
+  tab_header(
+    title = "Table 2. Association Between Urbanicity and Heavy Drinking Adjusted by Race/Ethnicity in 2024",
+    subtitle = "Analysis of Prevalence Risk Ratios (n = 390,895)"
+  ) %>%
+  cols_label(
+    Group = "Exposure Status",
+    Cases = "Cases (n)",
+    Total = "Total (N)",
+    Prevalence = "Prevalence",
+    Crude_PR = "Crude PR (95% CI)",
+    Adjusted_PR = "Adjusted PR (95% CI)*"
+  ) %>%
+  cols_align(align = "center", columns = everything()) %>%
+  cols_align(align = "left", columns = Group) %>%
+  tab_footnote(
+    footnote = "Adjusted for race/ethnicity using Mantel-Haenszel methods.",
+    locations = cells_column_labels(columns = Adjusted_PR)
+  ) %>%
+  opt_row_striping() %>%
+  tab_options(
+    table.border.top.color = "black",
+    table.border.bottom.color = "black",
+    heading.border.bottom.color = "black",
+    column_labels.border.bottom.color = "black",
+    column_labels.border.top.color = "black"
+  )
+
+table2_output
