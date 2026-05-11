@@ -9,8 +9,8 @@ library(epiR)
 # Checking on sample size for power calculation
 # 2019 data
 
-df_1 <- read_parquet("/Users/madisonclay/epi514/BRFSS_2019.parquet")
-df_2 <- read_parquet("/Users/madisonclay/epi514/BRFSS_2024.parquet")
+df_1 <- read_parquet("C:/Users/HP/Documents/epi514/BRFSS_2019.parquet")
+df_2 <- read_parquet("C:/Users/HP/Documents/epi514/BRFSS_2024.parquet")
 
 
 # Bind together for full dataset
@@ -262,8 +262,8 @@ table(df_2$incomg1, df_2$inc_cat, useNA = "always")
 table(df_2$inc_cat, useNA = "always")
 
 # Exporting
-write_parquet(df_1, "C:/Users/mayaol/epi514/BRFSS_2019.parquet")
-write_parquet(df_2, "C:/Users/mayaol/epi514/BRFSS_2024.parquet")
+write_parquet(df_1, "C:/Users/HP/Documents/epi514/BRFSS_2019.parquet")
+write_parquet(df_2, "C:/Users/HP/Documents/epi514/BRFSS_2024.parquet")
 
 ##### NEW, RECODED VARIABLES 
 
@@ -654,6 +654,163 @@ table2_output <- table2_data %>%
   tab_header(
     title = "Table 2. Association Between Urbanicity and Heavy Drinking Adjusted by Race/Ethnicity in 2024",
     subtitle = "Analysis of Prevalence Risk Ratios (n = 390,895)"
+  ) %>%
+  cols_label(
+    Group = "Exposure Status",
+    Cases = "Cases (n)",
+    Total = "Total (N)",
+    Prevalence = "Prevalence",
+    Crude_PR = "Crude PR (95% CI)",
+    Adjusted_PR = "Adjusted PR (95% CI)*"
+  ) %>%
+  cols_align(align = "center", columns = everything()) %>%
+  cols_align(align = "left", columns = Group) %>%
+  tab_footnote(
+    footnote = "Adjusted for race/ethnicity using Mantel-Haenszel methods.",
+    locations = cells_column_labels(columns = Adjusted_PR)
+  ) %>%
+  opt_row_striping() %>%
+  tab_options(
+    table.border.top.color = "black",
+    table.border.bottom.color = "black",
+    heading.border.bottom.color = "black",
+    column_labels.border.bottom.color = "black",
+    column_labels.border.top.color = "black"
+  )
+
+table2_output
+
+#########################
+# Maya's addition
+
+# 2019
+# Need to collapse some categories
+
+library(dplyr)
+library(forcats)
+
+df_1 <- df_1 %>%
+  mutate(
+    # Collapse Age into 3 broad groups
+    age_broad = fct_collapse(age_cat,
+                             "18-34" = c("18-24yo", "25-29 yo", "30-34 yo"),
+                             "35-54" = c("35-39 yo", "40-44 yo", "45-49 yo", "50-54 yo"),
+                             "55+"   = c("55-59 yo", "60-64 yo", "65-69 yo", "70-74 yo", "75-79 yo", "80+ yo")
+    ),
+    # Collapse Race into fewer categories to avoid small cells for specific groups
+    race_broad = fct_collapse(race_cat,
+                              "White" = "White only",
+                              "Black" = "Black only",
+                              "Hispanic" = "Hispanic",
+                              "AI/AN only" = "AI/AN only",
+                              "Asian only" = "Asian only",
+                              "Native Hawaiian or other Pacific Islander only" = "Native Hawaiian or other Pacific Islander only",
+                              "Other/Multiracial" = c("Other race only", "Multiracial")
+    )
+  )
+
+# Create the new interaction with fewer levels
+df_1$strata_simple <- interaction(df_1$race_broad, df_1$age_broad, df_1$sex_cat, drop = TRUE)
+
+# Re-build the table (Exposure, Outcome, Strata)
+race19.2by2_simple <- with(df_1, table(urbstat_cat, heavyalc, strata_simple))
+
+# Run the MH analysis
+race19.2by2_output <- epi.2by2(race19.2by2_simple, method = 'cross.sectional')
+print(race19.2by2_output)
+
+# Create & populate table
+table2_data <- data.frame(
+  Group = c("Rural (Reference)", "Urban"),
+  Cases = c(19131, 3298),
+  Total = c(313233, 57641),
+  Prevalence = c("6.11%", "5.72%"),
+  Crude_PR = c("1.00 (Ref)", "1.00 (1.00, 1.01)"),
+  Adjusted_PR = c("1.00 (Ref)", "1.00 (1.00, 1.01)")
+)
+
+table2_output <- table2_data %>%
+  gt() %>%
+  tab_header(
+    title = "Table 2. Association Between Urbanicity and Heavy Drinking Adjusted by Age, Sex and Race/Ethnicity in 2019",
+    subtitle = "Analysis of Prevalence Risk Ratios (n = 370,874)"
+  ) %>%
+  cols_label(
+    Group = "Exposure Status",
+    Cases = "Cases (n)",
+    Total = "Total (N)",
+    Prevalence = "Prevalence",
+    Crude_PR = "Crude PR (95% CI)",
+    Adjusted_PR = "Adjusted PR (95% CI)*"
+  ) %>%
+  cols_align(align = "center", columns = everything()) %>%
+  cols_align(align = "left", columns = Group) %>%
+  tab_footnote(
+    footnote = "Adjusted for race/ethnicity using Mantel-Haenszel methods.",
+    locations = cells_column_labels(columns = Adjusted_PR)
+  ) %>%
+  opt_row_striping() %>%
+  tab_options(
+    table.border.top.color = "black",
+    table.border.bottom.color = "black",
+    heading.border.bottom.color = "black",
+    column_labels.border.bottom.color = "black",
+    column_labels.border.top.color = "black"
+  )
+
+table2_output
+
+# 2024
+# Need to collapse some categories
+
+library(dplyr)
+library(forcats)
+
+df_2 <- df_2 %>%
+  mutate(
+    # Collapse Age into 3 broad groups
+    age_broad = fct_collapse(age_cat,
+                             "18-34" = c("18-24yo", "25-29 yo", "30-34 yo"),
+                             "35-54" = c("35-39 yo", "40-44 yo", "45-49 yo", "50-54 yo"),
+                             "55+"   = c("55-59 yo", "60-64 yo", "65-69 yo", "70-74 yo", "75-79 yo", "80+ yo")
+    ),
+    # Collapse Race into fewer categories to avoid small cells for specific groups
+    race_broad = fct_collapse(race_cat,
+                              "White" = "White only",
+                              "Black" = "Black only",
+                              "Hispanic" = "Hispanic",
+                              "AI/AN only" = "AI/AN only",
+                              "Asian only" = "Asian only",
+                              "Native Hawaiian or other Pacific Islander only" = "Native Hawaiian or other Pacific Islander only",
+                              "Other/Multiracial" = c("Other race only", "Multiracial")
+    )
+  )
+
+# Create the new interaction with fewer levels
+df_2$strata_simple <- interaction(df_2$race_broad, df_2$age_broad, df_2$sex_cat, drop = TRUE)
+
+# Re-build the table (Exposure, Outcome, Strata)
+race19.2by2_simple <- with(df_2, table(urbstat_cat, heavyalc, strata_simple))
+
+# Run the MH analysis
+race19.2by2_output <- epi.2by2(race19.2by2_simple, method = 'cross.sectional')
+print(race19.2by2_output)
+
+# Create & populate table
+table2_data <- data.frame(
+  Group = c("Rural (Reference)", "Urban"),
+  Cases = c(19705, 3276),
+  Total = c(333160, 52846),
+  Prevalence = c("5.91%", "6.20%"),
+  Crude_PR = c("1.00 (Ref)", "1.00 (0.99, 1.00)"),
+  Adjusted_PR = c("1.00 (Ref)", "1.00 (1.00, 1.00)")
+)
+
+table2_output <- table2_data %>%
+  gt() %>%
+  tab_header(
+    title = "Table 2. Association Between Urbanicity and Heavy Drinking Adjusted by Age, Sex and Race/Ethnicity in 2024",
+    subtitle = "Analysis of Prevalence Risk Ratios (n = 386,006)"
   ) %>%
   cols_label(
     Group = "Exposure Status",
