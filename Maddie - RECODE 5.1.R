@@ -322,7 +322,7 @@ income24.2by2.output
 #2019 with income and age 
 
 complicated.19 <- xtabs(~ heavyalc + urbstat_cat + urbstat_cat + inc_cat,
-                         data = df_1)
+                        data = df_1)
 n_strata <- 2 * 2
 
 complicated.array <- array(
@@ -836,3 +836,62 @@ table2_output <- table2_data %>%
   )
 
 table2_output
+
+# Combining tables together
+library(gt)
+library(dplyr)
+
+# 1. Define the 2019 data
+table2_2019 <- data.frame(
+  Year = "2019",
+  Group = c("Rural (Reference)", "Urban"),
+  Cases = c(19131, 3298),
+  Total = c(313233, 57641),
+  Prevalence = c("6.11%", "5.72%"),
+  Crude_PR = c("1.00 (Ref)", "1.00 (1.00, 1.01)"),
+  Adjusted_PR = c("1.00 (Ref)", "1.00 (1.00, 1.01)")
+)
+
+# 2. Define the 2024 data
+table2_2024 <- data.frame(
+  Year = "2024",
+  Group = c("Rural (Reference)", "Urban"),
+  Cases = c(19705, 3276),
+  Total = c(333160, 52846),
+  Prevalence = c("5.91%", "6.20%"),
+  Crude_PR = c("1.00 (Ref)", "1.00 (0.99, 1.00)"),
+  Adjusted_PR = c("1.00 (Ref)", "1.00 (1.00, 1.00)")
+)
+
+# 3. Combine and create the gt table
+table2_combined <- bind_rows(table2_2019, table2_2024) %>%
+  gt(groupname_col = "Year") %>%
+  tab_header(
+    title = "Table 2. Association Between Urbanicity and Heavy Drinking Adjusted by Age, Sex and Race/Ethnicity",
+    subtitle = "Comparative Analysis of Prevalence Risk Ratios (N = 756,880)"
+  ) %>%
+  cols_label(
+    Group = "Exposure Status",
+    Cases = "Cases (n)",
+    Total = "Total (N)",
+    Prevalence = "Prevalence",
+    Crude_PR = "Crude PR (95% CI)",
+    Adjusted_PR = "Adjusted PR (95% CI)*"
+  ) %>%
+  cols_align(align = "center", columns = everything()) %>%
+  cols_align(align = "left", columns = Group) %>%
+  tab_footnote(
+    footnote = "Adjusted for age, sex, and race/ethnicity using Mantel-Haenszel methods.",
+    locations = cells_column_labels(columns = Adjusted_PR)
+  ) %>%
+  opt_row_striping() %>%
+  tab_options(
+    table.border.top.color = "black",
+    table.border.bottom.color = "black",
+    heading.border.bottom.color = "black",
+    column_labels.border.bottom.color = "black",
+    column_labels.border.top.color = "black",
+    row_group.font.weight = "bold"
+  )
+
+table2_combined
