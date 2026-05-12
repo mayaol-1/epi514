@@ -10,8 +10,8 @@ library(gtsummary)
 
 #table 1 
 # load data 
-df_1 <- read_parquet('C:/Users/mayaol/epi514/BRFSS_2019.parquet')
-df_2 <- read_parquet('C:/Users/mayaol/epi514/BRFSS_2024.parquet')
+df_1 <- read_parquet('C:/Users/HP/Documents/epi514/BRFSS_2019.parquet')
+df_2 <- read_parquet('C:/Users/HP/Documents/epi514/BRFSS_2024.parquet')
 
 # Calculate missingness of each variable
 df_1 %>%
@@ -117,7 +117,7 @@ table1_output <- df_table1 %>%
   bold_labels() %>%
   modify_header(label ~ "**Variable**") %>%
   modify_spanning_header(all_stat_cols() ~ "**Urban Status**") %>%
-  modify_caption("**Table 1. BRFSS 2019 and 2024 Participant Characteristics by Urbanicity Status**")
+  modify_caption("**Table 1. BRFSS 2019 and 2024 Participant Characteristics by Urbanicity Status**") %>%
   modify_source_note(source_note = "Missingness of all variables assessed - variables with >5% missingness in overall data file have been reported in the table. Missing age - 14998 - 1.7%; missing race -  18038 - 2.1%; missing income - 196898 - 22%; missing urbanicity - 23081 - 2.6%; missing heavy drinking - 74397 - 8.5%")
 
 table1_output
