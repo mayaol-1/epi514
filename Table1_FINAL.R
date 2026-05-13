@@ -66,7 +66,7 @@ df_2 <- df_2 %>%
 
 # Calculate missingness of each variable
 df_1 %>%
-  summarise(across(
+  dplyr::summarise(across(
     c(age_cat, race_cat, inc_cat, urbstat_cat, heavyalc), 
     ~sum(is.na(.))
   ))
@@ -78,7 +78,7 @@ df_1 %>%
 # heavyalc - 27699 - 6.6%
 
 df_2 %>%
-  summarise(across(
+  dplyr::summarise(across(
     c(age_cat, race_cat, inc_cat, urbstat_cat, heavyalc), 
     ~sum(is.na(.))
   ))
@@ -92,7 +92,7 @@ df_2 %>%
 missing <- bind_rows(df_1, df_2)
 
 missing %>%
-  summarise(across(
+  dplyr::summarise(across(
     c(age_cat, race_cat, inc_cat, urbstat_cat, heavyalc), 
     ~sum(is.na(.))
   ))
