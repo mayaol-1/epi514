@@ -11,10 +11,6 @@ library(gtsummary)
 library(forcats)
 #table 1 
 # load data 
-<<<<<<< HEAD
-df_1 <- read_parquet('C:/Users/HP/Documents/epi514/BRFSS_2019.parquet')
-df_2 <- read_parquet('C:/Users/HP/Documents/epi514/BRFSS_2024.parquet')
-=======
 df_1 <- read_parquet('/Users/betitessema/Downloads/BRFSS_2019 (1).parquet')
 df_2 <- read_parquet ('/Users/betitessema/Downloads/BRFSS_2024 (1).parquet')
 
