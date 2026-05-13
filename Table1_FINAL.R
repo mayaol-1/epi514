@@ -6,12 +6,67 @@ library(tidyverse)
 library(epiR)
 library(dplyr)
 library(tidyr)
+install.packages("gtsummary")
 library(gtsummary)
-
+library(forcats)
 #table 1 
 # load data 
+<<<<<<< HEAD
 df_1 <- read_parquet('C:/Users/HP/Documents/epi514/BRFSS_2019.parquet')
 df_2 <- read_parquet('C:/Users/HP/Documents/epi514/BRFSS_2024.parquet')
+=======
+df_1 <- read_parquet('/Users/betitessema/Downloads/BRFSS_2019 (1).parquet')
+df_2 <- read_parquet ('/Users/betitessema/Downloads/BRFSS_2024 (1).parquet')
+
+head(df_1)
+head(df_2)
+# remove $ and yo, abbreviate NHPI
+df_1 <- df_1 %>%
+  mutate(
+    inc_cat = str_remove_all(inc_cat, fixed("$")),
+    age_cat = str_squish(str_remove_all(age_cat, fixed("yo"))),
+    
+    # Remove "only" from race categories
+    race_cat = str_remove(race_cat, " only$"),
+    
+    # Rename NHPI category
+    race_cat = str_replace(
+      race_cat,
+      "Native Hawaiian or other Pacific Islander",
+      "NHPI"
+    ),
+    
+    # Move categories to the end
+    race_cat = fct_relevel(
+      race_cat,
+      "White",
+      "Multiracial",
+      "Other race",
+      after = Inf
+    )
+  )
+
+df_2 <- df_2 %>%
+  mutate(
+    inc_cat = str_remove_all(inc_cat, fixed("$")),
+    age_cat = str_squish(str_remove_all(age_cat, fixed("yo"))),
+    
+    race_cat = str_remove(race_cat, " only$"),
+    
+    race_cat = str_replace(
+      race_cat,
+      "Native Hawaiian or other Pacific Islander",
+      "NHPI"
+    ),
+    
+    race_cat = fct_relevel(
+      race_cat,
+      "White",
+      "Multiracial",
+      "Other race",
+      after = Inf
+    ) )
+>>>>>>> f16e4faf436ddcab2cc89b80ade776b50c37f2ef
 
 # Calculate missingness of each variable
 df_1 %>%
@@ -87,13 +142,21 @@ df_table1 <- df_combined %>%
     ~tidyr::replace_na(as.character(.), "Missing")
   ))
 
+# reorganize income category 
+df_table1 <- df_table1 %>%
+  mutate(
+    inc_cat = fct_relevel(
+      inc_cat,
+      "Less than 15,000",
+      after = 0
+    )
+  )
+
 # Generate the table 1
 table1_output <- df_table1 %>%
   select(
     urbstat_cat, 
     sex_cat, 
-    heavyalc, 
-    drnkany, 
     age_cat, 
     race_cat, 
     inc_cat
@@ -103,9 +166,7 @@ table1_output <- df_table1 %>%
     missing = "ifany", 
     missing_text = "Missing",
     label = list(
-      heavyalc ~ "Heavy Alcohol Use",
       sex_cat  ~ "Sex",
-      drnkany  ~ "Any Alcohol Use",
       age_cat  ~ "Age Category",
       race_cat ~ "Race/Ethnicity",
       inc_cat  ~ "Income Category"
@@ -117,7 +178,19 @@ table1_output <- df_table1 %>%
   bold_labels() %>%
   modify_header(label ~ "**Variable**") %>%
   modify_spanning_header(all_stat_cols() ~ "**Urban Status**") %>%
-  modify_caption("**Table 1. BRFSS 2019 and 2024 Participant Characteristics by Urbanicity Status**") %>%
-  modify_source_note(source_note = "Missingness of all variables assessed - variables with >5% missingness in overall data file have been reported in the table. Missing age - 14998 - 1.7%; missing race -  18038 - 2.1%; missing income - 196898 - 22%; missing urbanicity - 23081 - 2.6%; missing heavy drinking - 74397 - 8.5%")
-
+  modify_caption(
+    "**Table 1. BRFSS 2019 and 2024 Participant Characteristics by Urbanicity Status**"
+  ) %>%
+  as_gt() %>%
+  tab_source_note(
+    source_note = "Abbreviations: AI/AN = American Indian and Alaskan Native; NHPI = Native Hawaiian or other Pacific Islander."
+  ) %>%
+  tab_source_note(
+    source_note = "Missingness of all variables assessed - variables with >5% missingness in overall data file have been reported in the table. Missing age - 14998 - 1.7%; missing race - 18038 - 2.1%; missing income - 196898 - 22%; missing urbanicity - 23081 - 2.6%; missing heavy drinking - 74397 - 8.5%"
+  )
 table1_output
+
+# save as PDF
+#load webshot2
+gtsave(table1_output, "table1.pdf")
+
