@@ -66,7 +66,7 @@ table(df_1$sexvar, useNA = "always")
 df_1$urbstat_cat <- NA
 df_1$urbstat_cat[df_1$urbstat == 2] <- 0 #reference group, rural 
 df_1$urbstat_cat[df_1$urbstat == 1] <- 1 #urban 
-df_1$urbstat_cat <- factor(df_1$urbstat_cat,levels=0:1,labels=c("Urban", "Rural"))
+df_1$urbstat_cat <- factor(df_1$urbstat_cat,levels=0:1,labels=c("Rural", "Urban"))
 #check 
 table(df_1$urbstat, df_1$urbstat_cat, useNA = "always")
 table(df_1$urbstat_cat, useNA = "always")
