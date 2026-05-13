@@ -6,13 +6,14 @@ library(tidyverse)
 library(epiR)
 library(dplyr)
 library(tidyr)
-install.packages("gtsummary")
+#install.packages("gtsummary")
 library(gtsummary)
 library(forcats)
+library(gt)
 #table 1 
 # load data 
-df_1 <- read_parquet('/Users/betitessema/Downloads/BRFSS_2019 (1).parquet')
-df_2 <- read_parquet ('/Users/betitessema/Downloads/BRFSS_2024 (1).parquet')
+df_1 <- read_parquet('C:/Users/HP/Documents/epi514/BRFSS_2019.parquet')
+df_2 <- read_parquet ('C:/Users/HP/Documents/epi514/BRFSS_2024.parquet')
 
 head(df_1)
 head(df_2)
@@ -62,7 +63,6 @@ df_2 <- df_2 %>%
       "Other race",
       after = Inf
     ) )
->>>>>>> f16e4faf436ddcab2cc89b80ade776b50c37f2ef
 
 # Calculate missingness of each variable
 df_1 %>%
@@ -130,16 +130,12 @@ df_2024 <- df_2 %>%
   mutate(year = "2024") %>%
   select(year, sex_cat, urbstat_cat, heavyalc, drnkany, age_cat, race_cat, inc_cat)
 
+# 1. Combine and select columns (Keep NAs as NAs)
 df_combined <- bind_rows(df_2019, df_2024)
 
+# 2. Reorganize income category 
+# (fct_relevel works fine with NAs; it just ignores them)
 df_table1 <- df_combined %>%
-  mutate(across(
-    c(inc_cat, heavyalc), 
-    ~tidyr::replace_na(as.character(.), "Missing")
-  ))
-
-# reorganize income category 
-df_table1 <- df_table1 %>%
   mutate(
     inc_cat = fct_relevel(
       inc_cat,
@@ -148,7 +144,7 @@ df_table1 <- df_table1 %>%
     )
   )
 
-# Generate the table 1
+# 3. Generate the table
 table1_output <- df_table1 %>%
   select(
     urbstat_cat, 
@@ -159,8 +155,9 @@ table1_output <- df_table1 %>%
   ) %>%
   tbl_summary(
     by = urbstat_cat,
+    # This ensures NAs are shown but excluded from % math
     missing = "ifany", 
-    missing_text = "Missing",
+    missing_text = "Missing", 
     label = list(
       sex_cat  ~ "Sex",
       age_cat  ~ "Age Category",
@@ -178,15 +175,16 @@ table1_output <- df_table1 %>%
     "**Table 1. BRFSS 2019 and 2024 Participant Characteristics by Urbanicity Status**"
   ) %>%
   as_gt() %>%
+  # Note: Ensure library(gt) is loaded or use gt::tab_source_note
   tab_source_note(
     source_note = "Abbreviations: AI/AN = American Indian and Alaskan Native; NHPI = Native Hawaiian or other Pacific Islander."
   ) %>%
   tab_source_note(
-    source_note = "Missingness of all variables assessed - variables with >5% missingness in overall data file have been reported in the table. Missing age - 14998 - 1.7%; missing race - 18038 - 2.1%; missing income - 196898 - 22%; missing urbanicity - 23081 - 2.6%; missing heavy drinking - 74397 - 8.5%"
+    source_note = "Missingness of all variables assessed - variables with >5% missingness in overall data file have been reported in the table. Missing age - 1.7%; missing race - 2.1%; missing income - 22%; missing urbanicity - 2.6%; missing heavy drinking - 8.5%"
   )
+
 table1_output
 
 # save as PDF
 #load webshot2
 gtsave(table1_output, "table1.pdf")
-
