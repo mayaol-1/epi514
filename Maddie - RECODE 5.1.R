@@ -285,6 +285,9 @@ df_2$age_cat
 df_2$race_cat
 df_2$inc_cat
 
+df_1 <- read_parquet("C:/Users/HP/Documents/epi514/BRFSS_2019.parquet")
+df_2 <- read_parquet("C:/Users/HP/Documents/epi514/BRFSS_2024.parquet")
+
 # table 2 -- 2x2 tables for alcohol x urbanicity and income / age 
 #2019 data crude 
 first.2by2 <- with(df_1, table(heavyalc, urbstat_cat))
