@@ -13,6 +13,7 @@ library(haven)
 
 df_1 <- read_parquet("C:/Users/HP/Documents/epi514/BRFSS_2019.parquet")
 df_2 <- read_parquet("C:/Users/HP/Documents/epi514/BRFSS_2024.parquet")
+df_3 <- bind_rows(df_1, df_2)
 
 #########################################################################
 #########################################################################
@@ -54,6 +55,7 @@ collapse_variables <- function(df) {
 
 df_1_final <- collapse_variables(df_1)
 df_2_final <- collapse_variables(df_2)
+df_3_final <- collapse_variables(df_3)
 
 # 1. Conflict-proof Readiness Check Function
 check_analysis_readiness <- function(df, year_label) {
@@ -84,6 +86,7 @@ check_analysis_readiness <- function(df, year_label) {
 
 check_analysis_readiness(df_1_final, "2019")
 check_analysis_readiness(df_2_final, "2024")
+check_analysis_readiness(df_3_final, "2024")
 
 
 prepare_analysis_data <- function(df) {
@@ -110,10 +113,12 @@ prepare_analysis_data <- function(df) {
 
 df_1_final <- prepare_analysis_data(df_1_final)
 df_2_final <- prepare_analysis_data(df_2_final)
+df_3_final <- prepare_analysis_data(df_3_final)
 
 # Subset to drinkers only
 df_1_final <- df_1_final %>% filter(drnkany == "Yes")
 df_2_final <- df_2_final %>% filter(drnkany == "Yes")
+df_3_final <- df_3_final %>% filter(drnkany == "Yes")
 
 #########################################################################
 #########################################################################
@@ -122,7 +127,7 @@ df_2_final <- df_2_final %>% filter(drnkany == "Yes")
 #########################################################################
 
 #2019 and 2024 combined crude
-df_3_final <- bind_rows(df_1_final, df_2_final)
+#df_3_final <- bind_rows(df_1_final, df_2_final)
 crudeboth.2by2 <- with(df_3_final, table(exposure, outcome))
 crudeboth.2by2.output <- epi.2by2(crudeboth.2by2, method = 'cross.sectional')
 crudeboth.2by2.output
@@ -239,6 +244,7 @@ run_mh_analysis <- function(df, year_label) {
 # Run the analysis again
 results_2019 <- run_mh_analysis(df_1_final, "2019")
 results_2024 <- run_mh_analysis(df_2_final, "2024")
+results_both <- run_mh_analysis(df_3_final, "2024")
 
 
 #########################################################################
