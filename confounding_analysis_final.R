@@ -181,18 +181,13 @@ income24.2by2 <- with(df_2_final, table(exposure, outcome, educa_collapsed))
 income24.2by2.output <- epi.2by2(income24.2by2, method = 'cross.sectional')
 income24.2by2.output
 
-# New confounders: race, income, education (sex and age are not different MH vs crude PRR values)
+# New confounders: age, race, income, education (sex and age are not different MH vs crude PRR values)
 
-
-
-
-
-
-
-
-
-
-
+#########################################################################
+#########################################################################
+########### STEP 3: RUN FULLY ADJUSTED MODEL
+#########################################################################
+#########################################################################
 
 run_mh_analysis <- function(df, year_label) {
   # 1. Create the interaction
@@ -240,12 +235,11 @@ results_2019 <- run_mh_analysis(df_1_final, "2019")
 results_2024 <- run_mh_analysis(df_2_final, "2024")
 
 
-
-
-
-
-
-
+#########################################################################
+#########################################################################
+########### STEP 4: CREATE TABLE 2
+#########################################################################
+#########################################################################
 
 # Combining tables together
 library(gt)
@@ -306,6 +300,11 @@ table2_combined <- bind_rows(table2_2019, table2_2024) %>%
 
 table2_combined
 
+#########################################################################
+#########################################################################
+########### STEP 5: EXPORT COLLAPSED FILES
+#########################################################################
+#########################################################################
 
 write_parquet(df_1_final, "C:/Users/HP/Documents/epi514/BRFSS_2019_collapsed.parquet")
 write_parquet(df_2_final, "C:/Users/HP/Documents/epi514/BRFSS_2024_collapsed.parquet")
