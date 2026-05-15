@@ -92,20 +92,20 @@ prepare_analysis_data <- function(df) {
     # (Doing this again here is a safe "double-check")
     mutate(
       exposure = factor(exposure, levels = c("Urban", "Rural")),
-      outcome  = factor(outcome, levels = c("Yes", "No"))
-    ) %>%
-    
+      outcome  = factor(outcome, levels = c("Yes", "No")) 
+     ) %>%
+
     # 2. Listwise Deletion
     # We remove rows missing ANY variable that will be in your final model
-    filter(
-      !is.na(exposure), 
-      !is.na(outcome), 
-      #!is.na(sex_cat), 
-      !is.na(age_collapsed), 
-      !is.na(race_collapsed),
-      !is.na(inc_collapsed),
-      !is.na(educa_collapsed)
-    )
+     filter(
+       !is.na(exposure),
+       !is.na(outcome),
+       #!is.na(sex_cat),
+       !is.na(age_collapsed),
+       !is.na(race_collapsed),
+       !is.na(inc_collapsed),
+       !is.na(educa_collapsed)
+     )
 }
 
 df_1_final <- prepare_analysis_data(df_1_final)
@@ -120,6 +120,12 @@ df_2_final <- df_2_final %>% filter(drnkany == "Yes")
 ########### STEP 2: ASSESS FOR CONFOUNDING
 #########################################################################
 #########################################################################
+
+#2019 and 2024 combined crude
+df_3_final <- bind_rows(df_1_final, df_2_final)
+crudeboth.2by2 <- with(df_3_final, table(exposure, outcome))
+crudeboth.2by2.output <- epi.2by2(crudeboth.2by2, method = 'cross.sectional')
+crudeboth.2by2.output
 
 #2019 crude
 crude19.2by2 <- with(df_1_final, table(exposure, outcome))
