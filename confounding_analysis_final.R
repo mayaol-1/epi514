@@ -27,8 +27,7 @@ collapse_variables <- function(df) {
     mutate(
       # Collapse Age: 18-34, 35-54, 55+
       age_collapsed = fct_collapse(age_cat,
-                                   "18-54" = c("18-24yo", "25-29 yo", "30-34 yo"),
-                                   "35-54" = c("35-39 yo", "40-44 yo", "45-49 yo", "50-54 yo"),
+                                   "18-54" = c("18-24yo", "25-29 yo", "30-34 yo", "35-39 yo", "40-44 yo", "45-49 yo", "50-54 yo"),
                                    "55+"   = c("55-59 yo", "60-64 yo", "65-69 yo", "70-74 yo", "75-79 yo", "80+ yo")
       ),
       # Collapse Race: Grouping small Ns like AI/AN and NH/PI into 'Other'
@@ -36,21 +35,17 @@ collapse_variables <- function(df) {
                                     "White" = "White only",
                                     "Black" = "Black only",
                                     "Hispanic" = "Hispanic",
-                                    "Asian" = "Asian only",
-                                    "Other/Multiracial" = c("AI/AN only", "Multiracial", "Other race only", 
-                                                            "Native Hawaiian or other Pacific Islander only")
+                                    "Asian, AI/AN, NHPI, Other/Multiracial" = c("Asian only", "AI/AN only","Native Hawaiian or other Pacific Islander only","Multiracial", "Other race only")
       ),
       # Collapse income
       inc_collapsed = fct_collapse(inc_cat,
                                    "<$25,000" = c("≥$15,000 and <$25,000", "Less than $15,000"),
-                                   "$25,000 - $50,000" = c("≥$25,000 and <$35,000", "≥$35,000 and <$50,000"),
-                                   "≥$50,000"   = c("≥$50,000")
+                                   "≥$25,000 - $50,000" = c("≥$25,000 and <$35,000", "≥$35,000 and <$50,000", "≥$50,000")
       ),
       # Collapse income
       educa_collapsed = fct_collapse(na_if(as.character(educa), "9"), 
-                                     "High School or Less" = c("1", "2", "3"),
-                                     "Some College"        = "4",
-                                     "College Graduate"    = c("5", "6")),
+                                     "High school or less" = c("1", "2", "3"),
+                                     "Some college or college graduate" = c("4","5", "6")),
       # ENSURE FACTOR LEVELS: Exposed (Urban) and Outcome (Yes) must be first!
       exposure = factor(urbstat_cat, levels = c("Urban", "Rural")),
       outcome  = factor(heavyalc, levels = c("Yes", "No"))
@@ -260,22 +255,22 @@ library(dplyr)
 table2_2019 <- data.frame(
   Year = "2019",
   Group = c("Rural (Reference)", "Urban"),
-  Cases = c(2915, 16808),
-  Total = c(22106, 138240),
-  Prevalence = c("13.2%", "12.2%"),
+  Cases = c(2917, 17167),
+  Total = c(22257, 142006),
+  Prevalence = c("13.11%", "12.09%"),
   Crude_PR = c("1.00 (Ref)", "0.92 (0.89, 0.96)"),
-  Adjusted_PR = c("1.00 (Ref)", "0.97 (0.93, 1.01)")
+  Adjusted_PR = c("1.00 (Ref)", "0.95 (0.91, 0.98)")
 )
 
 # 2. Define the 2024 data
 table2_2024 <- data.frame(
   Year = "2024",
   Group = c("Rural (Reference)", "Urban"),
-  Cases = c(2125, 10512),
-  Total = c(14999, 85498),
-  Prevalence = c("14.2%", "12.3%"),
-  Crude_PR = c("1.00 (Ref)","0.83 (0.80, 0.86)"),
-  Adjusted_PR = c("1.00 (Ref)","0.84 (0.81, 0.87)")
+  Cases = c(2125, 10756),
+  Total = c(15089, 88412),
+  Prevalence = c("14.08%", "12.17%"),
+  Crude_PR = c("1.00 (Ref)","0.86 (0.83, 0.90)"),
+  Adjusted_PR = c("1.00 (Ref)","0.89 (0.85, 0.93)")
 )
 
 # 3. Combine and create the gt table
@@ -283,7 +278,7 @@ table2_combined <- bind_rows(table2_2019, table2_2024) %>%
   gt(groupname_col = "Year") %>%
   tab_header(
     title = "Table 2. Association Between Urbanicity and Heavy Drinking Adjusted by Age, Race/Ethnicity, Income and Education",
-    subtitle = "Comparative Analysis of Prevalence Risk Ratios (N = 260,843)"
+    subtitle = "Comparative Analysis of Prevalence Risk Ratios (N = 267764)"
   ) %>%
   cols_label(
     Group = "Exposure Status",
@@ -296,7 +291,7 @@ table2_combined <- bind_rows(table2_2019, table2_2024) %>%
   cols_align(align = "center", columns = everything()) %>%
   cols_align(align = "left", columns = Group) %>%
   tab_footnote(
-    footnote = "Adjusted for age, race/ethnicity, income and education using Mantel-Haenszel methods.",
+    footnote = "Abbreviations: AI/AN = American Indian and Alaskan Native; NHPI = Native Hawaiian or other Pacific Islander. Adjusted for age, race/ethnicity, income and education using Mantel-Haenszel methods.",
     locations = cells_column_labels(columns = Adjusted_PR)
   ) %>%
   opt_row_striping() %>%
